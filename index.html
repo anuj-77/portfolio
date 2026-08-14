@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anuj Srivastava — Data Engineer</title>
+<meta name="description" content="Data Engineer specializing in production ELT pipelines — Airflow, dbt, Snowflake, Kafka, PySpark.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<style>
+  :root{
+    --ink:#0A0E14;
+    --surface:#111826;
+    --surface-2:#161F2E;
+    --line:#232E40;
+    --text:#EAEEF2;
+    --muted:#8B95A3;
+    --amber:#FF8A3D;
+    --teal:#45D6C4;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--ink);
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    overflow-x:hidden;
+  }
+  .font-display{font-family:'Space Grotesk',sans-serif;}
+  .font-mono{font-family:'JetBrains Mono',monospace;}
+
+  ::selection{background:var(--amber);color:var(--ink);}
+
+  /* focus visibility */
+  a:focus-visible, button:focus-visible{
+    outline:2px solid var(--teal);
+    outline-offset:3px;
+    border-radius:2px;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important; scroll-behavior:auto !important;}
+  }
+
+  /* status bar */
+  .statusbar{
+    background:rgba(10,14,20,0.85);
+    backdrop-filter: blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .pulse-dot{
+    width:7px;height:7px;border-radius:999px;background:var(--teal);
+    box-shadow:0 0 0 0 rgba(69,214,196,0.6);
+    animation:pulse 2s infinite;
+  }
+  @keyframes pulse{
+    0%{box-shadow:0 0 0 0 rgba(69,214,196,0.55);}
+    70%{box-shadow:0 0 0 8px rgba(69,214,196,0);}
+    100%{box-shadow:0 0 0 0 rgba(69,214,196,0);}
+  }
+
+  /* hero canvas */
+  #hero-canvas{position:absolute; inset:0; z-index:0; opacity:0.55;}
+
+  /* dag nodes */
+  .dag-node{cursor:pointer; transition:filter .2s ease;}
+  .dag-node:hover circle{ filter:drop-shadow(0 0 10px var(--teal)); }
+  .dag-node text{ font-family:'JetBrains Mono',monospace; }
+  .dag-edge{stroke:var(--line); stroke-width:1.5; fill:none;}
+  .dag-flow{
+    stroke:var(--teal);
+    stroke-width:2;
+    fill:none;
+    stroke-dasharray:6 10;
+    animation:flow 1.4s linear infinite;
+    opacity:0.85;
+  }
+  @keyframes flow{ to{ stroke-dashoffset:-160; } }
+
+  /* SLA cards */
+  .sla-card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    transition:border-color .25s ease, transform .25s ease;
+  }
+  .sla-card:hover{border-color:var(--amber); transform:translateY(-3px);}
+  .sla-bar{height:3px; background:var(--line); overflow:hidden; border-radius:2px;}
+  .sla-bar-fill{height:100%; background:linear-gradient(90deg,var(--teal),var(--amber));}
+
+  /* section eyebrow */
+  .task-id{
+    font-family:'JetBrains Mono',monospace;
+    font-size:0.72rem;
+    color:var(--amber);
+    letter-spacing:0.02em;
+  }
+  .task-id::before{content:"task_id: "; color:var(--muted);}
+
+  /* timeline */
+  .timeline-line{
+    position:absolute; left:15px; top:0; bottom:0; width:1px;
+    background:linear-gradient(to bottom, var(--teal), var(--line) 90%);
+  }
+  .timeline-dot{
+    width:11px;height:11px;border-radius:999px;
+    background:var(--ink); border:2px solid var(--teal);
+    position:absolute; left:10px;
+  }
+  details.exp-item summary{cursor:pointer; list-style:none;}
+  details.exp-item summary::-webkit-details-marker{display:none;}
+  details.exp-item[open] .chev{transform:rotate(90deg);}
+  .chev{transition:transform .2s ease;}
+
+  /* project card */
+  .project-card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    position:relative;
+    overflow:hidden;
+  }
+  .project-card::before{
+    content:"";
+    position:absolute; inset:0;
+    background:radial-gradient(600px circle at var(--mx,50%) var(--my,50%), rgba(255,138,61,0.06), transparent 40%);
+    opacity:0; transition:opacity .3s ease; pointer-events:none;
+  }
+  .project-card:hover::before{opacity:1;}
+  .log-line{font-family:'JetBrains Mono',monospace; font-size:0.78rem; color:var(--muted);}
+  .log-line .tag{color:var(--teal);}
+
+  /* skill cluster */
+  .cluster-card{background:var(--surface); border:1px solid var(--line);}
+  .cluster-node{
+    font-family:'JetBrains Mono',monospace;
+    font-size:0.75rem;
+    background:var(--surface-2);
+    border:1px solid var(--line);
+    transition:all .2s ease;
+  }
+  .cluster-node:hover{
+    border-color:var(--teal);
+    color:var(--teal);
+    box-shadow:0 0 12px rgba(69,214,196,0.25);
+  }
+
+  .btn-primary{
+    background:var(--amber); color:var(--ink);
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .btn-primary:hover{ transform:translateY(-2px); box-shadow:0 8px 24px rgba(255,138,61,0.25); }
+  .btn-ghost{
+    border:1px solid var(--line); color:var(--text);
+    transition:border-color .15s ease, background .15s ease;
+  }
+  .btn-ghost:hover{ border-color:var(--teal); background:var(--surface); }
+
+  .reveal{ opacity:0; transform:translateY(24px); }
+
+  #portrait-card{ transition: transform .15s cubic-bezier(.2,.8,.2,1); will-change: transform; }
+  #portrait-layer-1, #portrait-layer-2, #portrait-layer-3{ transition: transform .18s ease-out; }
+  #portrait-badge{ animation: badge-float 3.4s ease-in-out infinite; }
+  @keyframes badge-float{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(-5px);} }
+  .portrait-particle{ animation: portrait-drift linear infinite; }
+  @keyframes portrait-drift{ 0%{ transform:rotate(0deg);} 100%{ transform:rotate(360deg);} }
+  @media (prefers-reduced-motion: reduce){
+    #portrait-badge{ animation:none; }
+    .portrait-particle{ animation:none; }
+  }
+  @media (max-width: 640px){
+    #portrait-card{ transition:none; transform:none !important; }
+    #portrait-layer-1, #portrait-layer-2, #portrait-layer-3{ transform:none !important; }
+  }
+
+  .grid-fade{
+    background-image:
+      linear-gradient(to right, var(--line) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--line) 1px, transparent 1px);
+    background-size: 48px 48px;
+    -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, black 40%, transparent 90%);
+    mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, black 40%, transparent 90%);
+    opacity:0.5;
+  }
+</style>
+</head>
+<body class="antialiased">
+
+<!-- STATUS BAR -->
+<header class="statusbar fixed top-0 left-0 right-0 z-50">
+  <div class="max-w-6xl mx-auto px-5 py-3 flex items-center justify-between">
+    <a href="#top" class="font-display font-semibold text-sm tracking-wide">AS<span style="color:var(--amber)">.</span></a>
+    <div class="hidden md:flex items-center gap-6 font-mono text-xs text-[var(--muted)]">
+      <a href="#about" class="hover:text-[var(--text)] transition">about</a>
+      <a href="#architecture" class="hover:text-[var(--text)] transition">architecture</a>
+      <a href="#experience" class="hover:text-[var(--text)] transition">experience</a>
+      <a href="#projects" class="hover:text-[var(--text)] transition">projects</a>
+      <a href="#thinking" class="hover:text-[var(--text)] transition">thinking</a>
+      <a href="#skills" class="hover:text-[var(--text)] transition">skills</a>
+      <a href="#contact" class="hover:text-[var(--text)] transition">contact</a>
+    </div>
+    <div class="flex items-center gap-2 font-mono text-xs text-[var(--muted)]">
+      <span class="pulse-dot"></span>
+      <span>open_to_work: <span style="color:var(--teal)">true</span></span>
+    </div>
+  </div>
+</header>
+
+<!-- HERO -->
+<section id="top" class="relative min-h-screen flex items-center pt-24 pb-16 overflow-hidden">
+  <div id="hero-canvas"></div>
+  <div class="absolute inset-0 grid-fade"></div>
+
+  <div class="relative z-10 max-w-6xl mx-auto px-5 w-full grid lg:grid-cols-2 gap-12 items-center">
+    <div>
+      <p class="font-mono text-xs text-[var(--teal)] mb-4">$ status —<span class="text-[var(--muted)]"> pipeline: healthy · last_run: success</span></p>
+      <h1 class="font-display font-semibold text-4xl sm:text-5xl lg:text-[3.4rem] leading-[1.08] mb-6">
+        I build data pipelines<br> that don't page you<br> at 3&nbsp;a.m.
+      </h1>
+      <p class="text-[var(--muted)] text-base sm:text-lg max-w-lg mb-8 leading-relaxed">
+        Data Engineer with 2+ years designing and operating production ELT on AWS —
+        <span class="text-[var(--text)]">Airflow, dbt, Snowflake, Kafka, PySpark</span> —
+        moving up to 1&nbsp;TB of customer data a day, and owning it end-to-end from DAG design to 3&nbsp;a.m. pages.
+      </p>
+      <div class="flex flex-wrap gap-3">
+        <a href="#projects" class="btn-primary font-mono text-sm font-medium px-5 py-3 rounded-md">view_projects()</a>
+        <a href="https://drive.google.com/file/d/1yh-frTznzeNU7gg5oC9cga52b8BMKhuk/view?usp=sharing" id="resume-link" class="btn-ghost font-mono text-sm px-5 py-3 rounded-md">download_resume.pdf</a>
+        <a href="#contact" class="btn-ghost font-mono text-sm px-5 py-3 rounded-md">get_in_touch()</a>
+      </div>
+    </div>
+
+    <!-- DAG NAV -->
+    <div class="relative">
+      <p class="task-id mb-2">site_navigation_dag</p>
+      <svg viewBox="0 0 460 340" class="w-full h-auto" role="img" aria-label="Site navigation shown as a pipeline DAG. Select a node to jump to that section.">
+        <!-- edges -->
+        <path class="dag-edge" d="M70,50 C140,50 140,110 210,110"/>
+        <path class="dag-flow"  d="M70,50 C140,50 140,110 210,110"/>
+        <path class="dag-edge" d="M210,110 C280,110 280,170 350,170"/>
+        <path class="dag-flow"  d="M210,110 C280,110 280,170 350,170"/>
+        <path class="dag-edge" d="M210,110 C260,110 260,230 210,230"/>
+        <path class="dag-flow"  d="M210,110 C260,110 260,230 210,230"/>
+        <path class="dag-edge" d="M210,230 C150,230 150,290 90,290"/>
+        <path class="dag-flow"  d="M210,230 C150,230 150,290 90,290"/>
+        <path class="dag-edge" d="M350,170 C300,170 260,270 200,290" />
+        <path class="dag-flow"  d="M350,170 C300,170 260,270 200,290" />
+
+        <!-- nodes -->
+        <a href="#about">
+          <g class="dag-node" transform="translate(70,50)">
+            <circle r="20" fill="var(--ink)" stroke="var(--teal)" stroke-width="2"/>
+            <text x="0" y="5" text-anchor="middle" font-size="9" fill="var(--text)">ⓘ</text>
+            <text x="28" y="-6" font-size="10" fill="var(--muted)">extract_about</text>
+          </g>
+        </a>
+        <a href="#experience">
+          <g class="dag-node" transform="translate(210,110)">
+            <circle r="20" fill="var(--ink)" stroke="var(--amber)" stroke-width="2"/>
+            <text x="0" y="5" text-anchor="middle" font-size="9" fill="var(--text)">⌛</text>
+            <text x="28" y="-6" font-size="10" fill="var(--muted)">transform_experience</text>
+          </g>
+        </a>
+        <a href="#projects">
+          <g class="dag-node" transform="translate(350,170)">
+            <circle r="20" fill="var(--ink)" stroke="var(--teal)" stroke-width="2"/>
+            <text x="0" y="5" text-anchor="middle" font-size="9" fill="var(--text)">▣</text>
+            <text x="18" y="-24" font-size="10" fill="var(--muted)">load_projects</text>
+          </g>
+        </a>
+        <a href="#skills">
+          <g class="dag-node" transform="translate(210,230)">
+            <circle r="20" fill="var(--ink)" stroke="var(--amber)" stroke-width="2"/>
+            <text x="0" y="5" text-anchor="middle" font-size="9" fill="var(--text)">✓</text>
+            <text x="-70" y="5" font-size="10" fill="var(--muted)">validate_skills</text>
+          </g>
+        </a>
+        <a href="#contact">
+          <g class="dag-node" transform="translate(90,290)">
+            <circle r="20" fill="var(--ink)" stroke="var(--teal)" stroke-width="2"/>
+            <text x="0" y="5" text-anchor="middle" font-size="9" fill="var(--text)">✉</text>
+            <text x="-22" y="34" font-size="10" fill="var(--muted)">notify_contact</text>
+          </g>
+        </a>
+      </svg>
+      <p class="font-mono text-[10px] text-[var(--muted)] mt-1">select a node to run →</p>
+    </div>
+  </div>
+</section>
+
+<!-- SLA / STATS -->
+<section class="relative z-10 -mt-6 pb-8">
+  <div class="max-w-6xl mx-auto px-5 grid grid-cols-2 md:grid-cols-4 gap-4">
+    <div class="sla-card rounded-lg p-4 reveal">
+      <p class="font-display text-2xl font-semibold">1&nbsp;TB<span class="text-[var(--muted)] text-sm">/day</span></p>
+      <p class="text-xs text-[var(--muted)] mt-1">customer data processed</p>
+      <div class="sla-bar mt-3"><div class="sla-bar-fill" style="width:90%"></div></div>
+    </div>
+    <div class="sla-card rounded-lg p-4 reveal">
+      <p class="font-display text-2xl font-semibold">68–80%</p>
+      <p class="text-xs text-[var(--muted)] mt-1">Glue/Athena runtime cut (25m → 5–8m)</p>
+      <div class="sla-bar mt-3"><div class="sla-bar-fill" style="width:75%"></div></div>
+    </div>
+    <div class="sla-card rounded-lg p-4 reveal">
+      <p class="font-display text-2xl font-semibold">&lt;15&nbsp;min</p>
+      <p class="text-xs text-[var(--muted)] mt-1">mean time to detect (was hours)</p>
+      <div class="sla-bar mt-3"><div class="sla-bar-fill" style="width:95%"></div></div>
+    </div>
+    <div class="sla-card rounded-lg p-4 reveal">
+      <p class="font-display text-2xl font-semibold">10+</p>
+      <p class="text-xs text-[var(--muted)] mt-1">production Airflow DAGs owned</p>
+      <div class="sla-bar mt-3"><div class="sla-bar-fill" style="width:60%"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about" class="py-24 border-t" style="border-color:var(--line)">
+  <div class="max-w-6xl mx-auto px-5 grid lg:grid-cols-[1fr_1.4fr] gap-10">
+    <div class="reveal">
+      <p class="task-id mb-3">extract_about</p>
+      <h2 class="font-display text-3xl font-semibold mb-6">About</h2>
+      <div id="portrait-scene" class="relative w-48 sm:w-56 select-none" style="perspective:900px;">
+        <!-- ambient node/particle ring -->
+        <svg id="portrait-nodes" viewBox="0 0 240 240" class="absolute -inset-6 w-[calc(100%+3rem)] h-[calc(100%+3rem)] pointer-events-none" style="z-index:0;">
+          <g id="portrait-node-lines" stroke="var(--line)" stroke-width="1" opacity="0.7"></g>
+          <g id="portrait-node-dots"></g>
+        </svg>
+
+        <!-- parallax depth layers -->
+        <div id="portrait-layer-3" class="absolute inset-0 rounded-2xl" style="background:radial-gradient(circle at 30% 20%, rgba(69,214,196,0.10), transparent 60%); transform:translateZ(-60px) scale(1.18); z-index:1;"></div>
+        <div id="portrait-layer-2" class="absolute inset-0 rounded-2xl" style="border:1px solid var(--line); transform:translateZ(-32px) scale(1.1); z-index:2;"></div>
+        <div id="portrait-layer-1" class="absolute inset-0 rounded-2xl" style="border:1px solid var(--line); background:var(--surface); opacity:0.5; transform:translateZ(-14px) scale(1.045); z-index:3;"></div>
+
+        <!-- glass card -->
+        <div id="portrait-card" class="relative rounded-2xl p-2.5" style="z-index:4; background:linear-gradient(160deg, rgba(22,31,46,0.75), rgba(10,14,20,0.55)); border:1px solid var(--line); backdrop-filter:blur(6px); transform-style:preserve-3d; box-shadow:0 20px 50px -20px rgba(0,0,0,0.6);">
+          <div id="portrait-glow" class="absolute -inset-px rounded-2xl pointer-events-none" style="background:radial-gradient(220px circle at var(--gx,50%) var(--gy,50%), rgba(69,214,196,0.16), transparent 60%); opacity:0; transition:opacity .35s ease; z-index:5;"></div>
+          <img
+          src="data:image/jpeg;base64,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"
+          alt="Portrait of Anuj Srivastava"
+          class="relative block w-full aspect-square object-cover rounded-xl grayscale-[12%]"
+          style="transform:translateZ(20px);"
+          loading="lazy"
+        />
+        </div>
+
+        <!-- floating status badge -->
+        <div id="portrait-badge" class="absolute -bottom-4 -right-4 sm:-right-6 rounded-lg px-3 py-2 font-mono text-[10px] flex items-center gap-1.5" style="z-index:6; background:var(--surface); border:1px solid var(--teal); box-shadow:0 8px 24px -8px rgba(0,0,0,0.6);">
+          <span class="pulse-dot" style="width:5px;height:5px;"></span>
+          <span style="color:var(--teal)">open to opportunities</span>
+        </div>
+      </div>
+      <p class="font-mono text-[10px] text-[var(--muted)] mt-4">node: anuj_srivastava.jpg</p>
+    </div>
+    <div class="reveal space-y-5 text-[var(--muted)] leading-relaxed">
+      <p>
+        I got here through an MCA in AI &amp; Machine Learning, but the work that stuck was
+        further upstream — <span class="text-[var(--text)]">making sure the data other people's models
+        and dashboards depend on actually shows up, on time, in the right shape.</span>
+        At CloudKeeper I owned production ELT for three-plus business units: Airflow for
+        orchestration, dbt for transformation and testing, Snowflake for the warehouse layer.
+      </p>
+      <p>
+        My default posture is <span class="text-[var(--text)]">operational, not just architectural</span> —
+        a pipeline isn't done when it runs once, it's done when it has retries, SLA monitoring,
+        alerting, and a runbook someone else can follow at 3&nbsp;a.m. instead of paging me.
+        That's the lens behind most of the decisions on this page.
+      </p>
+      <p>
+        Before data engineering, I validated AI-training datasets at Outlier.ai and built
+        ingestion/preprocessing workflows for ML pipelines at CodeSoft — which is part of why
+        I care about data quality upstream of the warehouse, not just inside it.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ARCHITECTURE EXPLORER -->
+<section id="architecture" class="py-24 border-t" style="border-color:var(--line)">
+  <div class="max-w-6xl mx-auto px-5">
+    <p class="task-id mb-3 reveal">render_architecture</p>
+    <h2 class="font-display text-3xl font-semibold mb-3 reveal">How I Think About Data Systems</h2>
+    <p class="text-[var(--muted)] mb-10 max-w-2xl reveal">
+      Not a stack of logos. A platform is a sequence of trust boundaries — each stage exists to
+      catch a specific failure mode before it reaches the warehouse. Rotate it, then click a
+      stage to see what it's actually responsible for.
+    </p>
+
+    <div class="grid lg:grid-cols-[1.4fr_1fr] gap-6 reveal">
+      <div class="relative rounded-xl border overflow-hidden" style="border-color:var(--line); background:var(--surface); height:420px;">
+        <div id="arch-canvas" class="absolute inset-0 cursor-grab active:cursor-grabbing"></div>
+        <div id="arch-fallback" class="absolute inset-0 hidden items-center justify-center p-6">
+          <svg viewBox="0 0 640 60" class="w-full h-auto" role="img" aria-label="Static pipeline diagram: Kafka to Spark to Airflow to dbt to Snowflake to Analytics">
+            <g font-family="JetBrains Mono, monospace" font-size="11" fill="var(--text)">
+              <text x="10" y="34">Kafka</text><text x="90" y="34" fill="var(--muted)">→</text>
+              <text x="120" y="34">Spark</text><text x="200" y="34" fill="var(--muted)">→</text>
+              <text x="230" y="34">Airflow</text><text x="320" y="34" fill="var(--muted)">→</text>
+              <text x="350" y="34">dbt</text><text x="410" y="34" fill="var(--muted)">→</text>
+              <text x="440" y="34">Snowflake</text><text x="550" y="34" fill="var(--muted)">→</text>
+              <text x="580" y="34">Analytics</text>
+            </g>
+          </svg>
+        </div>
+        <p class="absolute bottom-3 left-4 font-mono text-[10px] text-[var(--muted)] pointer-events-none">drag to rotate · tap a stage below</p>
+        <p id="arch-hint" class="absolute top-3 right-4 font-mono text-[10px] text-[var(--teal)] pointer-events-none">● live</p>
+      </div>
+
+      <div class="flex flex-col gap-4">
+        <div class="flex flex-wrap gap-2 reveal" id="arch-pills">
+          <button class="cluster-node px-3 py-1.5 rounded font-mono text-xs" data-stage="0" style="border-color:var(--teal); color:var(--teal);">Kafka</button>
+          <button class="cluster-node px-3 py-1.5 rounded font-mono text-xs" data-stage="1">Spark</button>
+          <button class="cluster-node px-3 py-1.5 rounded font-mono text-xs" data-stage="2">Airflow</button>
+          <button class="cluster-node px-3 py-1.5 rounded font-mono text-xs" data-stage="3">dbt</button>
+          <button class="cluster-node px-3 py-1.5 rounded font-mono text-xs" data-stage="4">Snowflake</button>
+          <button class="cluster-node px-3 py-1.5 rounded font-mono text-xs" data-stage="5">Analytics</button>
+        </div>
+
+        <div id="arch-panel" class="cluster-card rounded-xl p-6 flex flex-col justify-center flex-1 min-h-[340px]">
+          <p class="font-mono text-xs text-[var(--amber)] mb-2" id="arch-panel-tag">stage 01 / 06</p>
+          <h3 class="font-display text-xl font-semibold mb-3" id="arch-panel-title">Kafka — Ingestion Boundary</h3>
+          <p class="text-sm text-[var(--muted)] leading-relaxed" id="arch-panel-body">
+            Every event enters through here first. This is the boundary where I decide what "valid"
+            means before anything downstream has to guess — malformed or late events get caught
+            here, not three stages later where they're expensive to trace back.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience" class="py-24 border-t" style="border-color:var(--line)">
+  <div class="max-w-6xl mx-auto px-5">
+    <p class="task-id mb-3 reveal">transform_experience</p>
+    <h2 class="font-display text-3xl font-semibold mb-12 reveal">Experience</h2>
+
+    <div class="relative pl-10">
+      <div class="timeline-line"></div>
+
+      <!-- CloudKeeper -->
+      <div class="relative mb-10 reveal">
+        
+        <details class="exp-item" open>
+          <summary class="flex items-start justify-between gap-4">
+            <div>
+              <p class="font-display text-lg font-semibold">Data Engineer <span class="text-[var(--muted)] font-normal">— CloudKeeper</span></p>
+              <p class="font-mono text-xs text-[var(--muted)] mt-1">Jan 2025 – Jan 2026 · Noida, India</p>
+            </div>
+            <span class="chev font-mono text-[var(--teal)] mt-1">›</span>
+          </summary>
+          <ul class="mt-4 space-y-2.5 text-sm text-[var(--muted)] leading-relaxed list-disc list-inside">
+            <li>Designed and operated production ELT pipelines on AWS processing 200&nbsp;GB–1&nbsp;TB of customer data daily across 3+ business units — Airflow/MWAA for orchestration, dbt for transformation, S3 for storage, Snowflake for analytics.</li>
+            <li>Owned 10+ production Airflow DAGs end-to-end: scheduling, dependencies, retries, SLA monitoring, sensors, backfills, failure recovery. Runbooks cut manual intervention by <span class="text-[var(--text)]">60%</span>.</li>
+            <li>Built 30+ dbt models across staging/intermediate/mart layers with dimensional modeling, star-schema design, and SCD Type&nbsp;2 patterns, with automated tests in CI.</li>
+            <li>
+              Optimized a Glue/Athena validation workflow by cutting redundant full-table scans and adding partition pruning — <span class="text-[var(--text)]">25&nbsp;min → 5–8&nbsp;min (68–80%)</span>.
+              <div class="mt-3 max-w-xs">
+                <div class="flex items-center gap-2 mb-1.5">
+                  <span class="font-mono text-[10px] text-[var(--muted)] w-12">before</span>
+                  <div class="sla-bar flex-1"><div class="h-full" style="width:100%; background:var(--muted);"></div></div>
+                  <span class="font-mono text-[10px] text-[var(--muted)] w-10 text-right">25m</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="font-mono text-[10px] text-[var(--teal)] w-12">after</span>
+                  <div class="sla-bar flex-1"><div class="sla-bar-fill" style="width:26%"></div></div>
+                  <span class="font-mono text-[10px] text-[var(--teal)] w-10 text-right">6.5m</span>
+                </div>
+              </div>
+            </li>
+            <li>Built PySpark jobs on EMR for S3→Snowflake ingestion, contributing to a <span class="text-[var(--text)]">30% pipeline runtime reduction</span>.</li>
+            <li>Built a config-ingestion pipeline off the BillDesk API into S3/Snowflake with maintained data lineage.</li>
+            <li>Automated Slack alerting for Airflow/dbt failures — MTTD dropped from hours to <span class="text-[var(--text)]">under 15 minutes</span>.</li>
+          </ul>
+        </details>
+      </div>
+
+      <!-- Outlier -->
+      <div class="relative mb-10 reveal">
+        
+        <details class="exp-item">
+          <summary class="flex items-start justify-between gap-4">
+            <div>
+              <p class="font-display text-lg font-semibold">Data Mathematical Expert <span class="text-[var(--muted)] font-normal">— Outlier.ai</span></p>
+              <p class="font-mono text-xs text-[var(--muted)] mt-1">May 2024 – Dec 2024 · Remote</p>
+            </div>
+            <span class="chev font-mono text-[var(--teal)] mt-1">›</span>
+          </summary>
+          <ul class="mt-4 space-y-2.5 text-sm text-[var(--muted)] leading-relaxed list-disc list-inside">
+            <li>Validated 90+ AI-generated mathematics and statistics datasets for LLM training, holding 95%+ accuracy against ground-truth evaluations.</li>
+            <li>Used SQL-based consistency checks to catch data-quality issues across dataset batches.</li>
+          </ul>
+        </details>
+      </div>
+
+      <!-- CodeSoft -->
+      <div class="relative reveal">
+        
+        <details class="exp-item">
+          <summary class="flex items-start justify-between gap-4">
+            <div>
+              <p class="font-display text-lg font-semibold">Machine Learning Intern <span class="text-[var(--muted)] font-normal">— CodeSoft</span></p>
+              <p class="font-mono text-xs text-[var(--muted)] mt-1">May 2024 – Jun 2024 · Remote, part-time</p>
+            </div>
+            <span class="chev font-mono text-[var(--teal)] mt-1">›</span>
+          </summary>
+          <ul class="mt-4 space-y-2.5 text-sm text-[var(--muted)] leading-relaxed list-disc list-inside">
+            <li>Built Python/SQL data ingestion and preprocessing workflows for ML training datasets.</li>
+            <li>Automated cleaning and transformation steps, improving dataset-prep efficiency by 25%.</li>
+          </ul>
+        </details>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects" class="py-24 border-t" style="border-color:var(--line)">
+  <div class="max-w-6xl mx-auto px-5">
+    <p class="task-id mb-3 reveal">load_projects</p>
+    <h2 class="font-display text-3xl font-semibold mb-3 reveal">Featured Projects</h2>
+    <p class="text-[var(--muted)] mb-12 max-w-xl reveal">One deep, real build — architecture and trade-offs, not just a tech-stack tag list.</p>
+
+    <!-- <div class="grid lg:grid-cols-[1.3fr_1fr] gap-6 reveal"> -->
+      <div class="project-card rounded-xl p-7">
+        <div class="flex items-start justify-between mb-4">
+          <div>
+            <h3 class="font-display text-xl font-semibold">Real-Time E-Commerce Data Platform</h3>
+            <p class="text-xs text-[var(--muted)] mt-1">Kafka · PySpark · Airflow · dbt · Snowflake · Docker</p>
+          </div>
+          <a href="https://github.com/anuj-77/real-time-ecommerce-data-pipeline" class="font-mono text-xs btn-ghost px-3 py-1.5 rounded whitespace-nowrap">repo ↗</a>
+        </div>
+
+        <p class="text-sm text-[var(--muted)] leading-relaxed mb-5">
+          An end-to-end platform processing 50K+ synthetic events daily across separate streaming
+          and batch paths — transactional events, product/catalog data, and currency enrichment
+          modeled and orchestrated independently, then reconciled in the warehouse layer.
+        </p>
+
+        <!-- architecture diagram -->
+        <div class="mb-6 p-4 rounded-lg" style="background:var(--surface-2); border:1px solid var(--line);">
+          <p class="font-mono text-[10px] text-[var(--muted)] mb-3">architecture</p>
+          <svg viewBox="0 0 640 130" class="w-full h-auto" role="img" aria-label="Kafka producer to PySpark Structured Streaming to S3 or MinIO, in parallel with Airflow batch orchestration into Snowflake and dbt models">
+            <defs>
+              <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                <path d="M0,0 L6,3 L0,6 Z" fill="var(--muted)"/>
+              </marker>
+            </defs>
+            <!-- streaming path -->
+            <rect x="10" y="14" width="100" height="34" rx="5" fill="var(--ink)" stroke="var(--teal)" stroke-width="1.5"/>
+            <text x="60" y="35" text-anchor="middle" font-size="10" fill="var(--text)" font-family="JetBrains Mono, monospace">Kafka</text>
+            <line x1="110" y1="31" x2="150" y2="31" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#arrow)"/>
+            <rect x="150" y="14" width="130" height="34" rx="5" fill="var(--ink)" stroke="var(--teal)" stroke-width="1.5"/>
+            <text x="215" y="30" text-anchor="middle" font-size="9" fill="var(--text)" font-family="JetBrains Mono, monospace">PySpark</text>
+            <text x="215" y="41" text-anchor="middle" font-size="9" fill="var(--text)" font-family="JetBrains Mono, monospace">Structured Streaming</text>
+            <line x1="280" y1="31" x2="320" y2="31" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#arrow)"/>
+            <rect x="320" y="14" width="110" height="34" rx="5" fill="var(--ink)" stroke="var(--teal)" stroke-width="1.5"/>
+            <text x="375" y="35" text-anchor="middle" font-size="10" fill="var(--text)" font-family="JetBrains Mono, monospace">S3 / MinIO</text>
+
+            <!-- batch path -->
+            <rect x="10" y="82" width="130" height="34" rx="5" fill="var(--ink)" stroke="var(--amber)" stroke-width="1.5"/>
+            <text x="75" y="103" text-anchor="middle" font-size="10" fill="var(--text)" font-family="JetBrains Mono, monospace">Airflow (batch)</text>
+            <line x1="140" y1="99" x2="180" y2="99" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#arrow)"/>
+            <rect x="180" y="82" width="110" height="34" rx="5" fill="var(--ink)" stroke="var(--amber)" stroke-width="1.5"/>
+            <text x="235" y="103" text-anchor="middle" font-size="10" fill="var(--text)" font-family="JetBrains Mono, monospace">Snowflake</text>
+            <line x1="290" y1="99" x2="330" y2="99" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#arrow)"/>
+            <rect x="330" y="82" width="90" height="34" rx="5" fill="var(--ink)" stroke="var(--amber)" stroke-width="1.5"/>
+            <text x="375" y="103" text-anchor="middle" font-size="10" fill="var(--text)" font-family="JetBrains Mono, monospace">dbt</text>
+
+            <!-- reconcile -->
+            <line x1="375" y1="48" x2="375" y2="82" stroke="var(--line)" stroke-width="1.5" stroke-dasharray="3 3"/>
+            <line x1="430" y1="31" x2="490" y2="60" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#arrow)"/>
+            <line x1="420" y1="99" x2="490" y2="65" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#arrow)"/>
+            <rect x="490" y="48" width="140" height="34" rx="5" fill="var(--ink)" stroke="var(--teal)" stroke-width="1.5"/>
+            <text x="560" y="69" text-anchor="middle" font-size="10" fill="var(--text)" font-family="JetBrains Mono, monospace">Analytics Marts</text>
+          </svg>
+        </div>
+
+        <div class="space-y-2 mb-5">
+          <p class="log-line"><span class="tag">[ingest]</span> Python Kafka producer → PySpark Structured Streaming: transformation, null handling, type validation, enrichment, checkpoint-based fault-tolerant recovery → curated Parquet on S3/MinIO.</p>
+          <p class="log-line"><span class="tag">[transform]</span> 20+ dbt models (staging → intermediate → mart), star schema, SCD Type 2 customer dimension for historical tracking.</p>
+          <p class="log-line"><span class="tag">[orchestrate]</span> Airflow: ingestion → validation → COPY INTO Snowflake → dbt run → data-quality checks → Slack alert on failure.</p>
+          <p class="log-line"><span class="tag">[quality/ci]</span> Great Expectations + GitHub Actions; Kafka/Spark/Airflow/MinIO containerized via Docker Compose for reproducible dev.</p>
+        </div>
+
+        <!-- trade-offs -->
+        <div class="mb-5 grid sm:grid-cols-2 gap-3">
+          <div class="p-3 rounded-lg" style="background:var(--surface-2); border:1px solid var(--line);">
+            <p class="font-mono text-[10px] text-[var(--teal)] mb-1">design decision</p>
+            <p class="text-xs text-[var(--muted)] leading-relaxed">Two independent paths (streaming + batch) instead of one unified pipeline — event-level latency and catalog-level consistency have different failure tolerances, so coupling them would've meant either slowing down events or risking half-updated catalog state.</p>
+          </div>
+          <div class="p-3 rounded-lg" style="background:var(--surface-2); border:1px solid var(--line);">
+            <p class="font-mono text-[10px] text-[var(--amber)] mb-1">failure handling</p>
+            <p class="text-xs text-[var(--muted)] leading-relaxed">Checkpoint-based recovery on the Spark side means a consumer restart resumes from last committed offset, not zero — no duplicate-processing cleanup needed after a crash.</p>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap gap-2">
+          <span class="cluster-node px-2.5 py-1 rounded">streaming + batch</span>
+          <span class="cluster-node px-2.5 py-1 rounded">SCD Type 2</span>
+          <span class="cluster-node px-2.5 py-1 rounded">fault-tolerant checkpointing</span>
+          <span class="cluster-node px-2.5 py-1 rounded">CI data quality</span>
+        </div>
+      </div>
+
+    <!-- </div> -->
+  </div>
+</section>
+
+<!-- ENGINEERING THINKING -->
+<section id="thinking" class="py-24 border-t" style="border-color:var(--line)">
+  <div class="max-w-6xl mx-auto px-5">
+    <p class="task-id mb-3 reveal">assert_engineering_judgment</p>
+    <h2 class="font-display text-3xl font-semibold mb-3 reveal">Engineering Thinking</h2>
+    <p class="text-[var(--muted)] mb-12 max-w-xl reveal">
+      Tools are the easy part to list. These are the actual calls — what I chose, what I turned
+      down, and why — pulled from real production work, not a buzzword grid.
+    </p>
+
+    <div class="space-y-4">
+      <div class="cluster-card rounded-xl p-6 reveal grid md:grid-cols-[140px_1fr] gap-5 items-start">
+        <p class="font-mono text-xs text-[var(--amber)] pt-1">reliability</p>
+        <div>
+          <p class="text-sm text-[var(--text)] font-medium mb-1.5">Runbooks over heroics</p>
+          <p class="text-sm text-[var(--muted)] leading-relaxed">
+            10+ DAGs owned end-to-end meant failures couldn't all route through me personally.
+            I chose to spend time writing runbooks and structuring alerts so someone else could
+            triage a failed DAG without paging me first — that's what actually cut manual
+            intervention by 60%, not the pipelines being "more correct."
+          </p>
+        </div>
+      </div>
+
+      <div class="cluster-card rounded-xl p-6 reveal grid md:grid-cols-[140px_1fr] gap-5 items-start">
+        <p class="font-mono text-xs text-[var(--amber)] pt-1">performance</p>
+        <div>
+          <p class="text-sm text-[var(--text)] font-medium mb-1.5">Fix the access pattern, not the hardware</p>
+          <p class="text-sm text-[var(--muted)] leading-relaxed">
+            The Glue/Athena workflow was slow because it was scanning full tables on every run.
+            The instinct is to scale the cluster up; I looked at the query pattern instead and
+            added partition pruning to eliminate the redundant scans — same infra, 68–80% faster,
+            and it stayed fast as data volume grew instead of needing another scale-up later.
+          </p>
+        </div>
+      </div>
+
+      <div class="cluster-card rounded-xl p-6 reveal grid md:grid-cols-[140px_1fr] gap-5 items-start">
+        <p class="font-mono text-xs text-[var(--amber)] pt-1">data modeling</p>
+        <div>
+          <p class="text-sm text-[var(--text)] font-medium mb-1.5">SCD Type 2 where history actually matters</p>
+          <p class="text-sm text-[var(--muted)] leading-relaxed">
+            Not every dimension needs to track history — it's extra storage and join complexity.
+            I used SCD Type 2 specifically on the customer dimension, where "what did we know at
+            the time" changes the answer to real business questions, and kept simpler patterns
+            elsewhere instead of applying it everywhere by default.
+          </p>
+        </div>
+      </div>
+
+      <div class="cluster-card rounded-xl p-6 reveal grid md:grid-cols-[140px_1fr] gap-5 items-start">
+        <p class="font-mono text-xs text-[var(--amber)] pt-1">system boundaries</p>
+        <div>
+          <p class="text-sm text-[var(--text)] font-medium mb-1.5">Streaming and batch don't share a failure budget</p>
+          <p class="text-sm text-[var(--muted)] leading-relaxed">
+            On the e-commerce platform, event ingestion and catalog updates run as two separate
+            paths instead of one unified pipeline. They have different latency and consistency
+            requirements — coupling them would mean either slowing down real-time events or
+            risking a half-updated catalog. Keeping the boundary explicit kept both sides simpler.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills" class="py-24 border-t" style="border-color:var(--line)">
+  <div class="max-w-6xl mx-auto px-5">
+    <p class="task-id mb-3 reveal">validate_skills</p>
+    <h2 class="font-display text-3xl font-semibold mb-3 reveal">Technical Cluster</h2>
+    <p class="text-[var(--muted)] mb-8 max-w-xl reveal">Grouped the way a cluster resource monitor would group them — by function, not alphabetically. The map below shows how they actually depend on each other in production.</p>
+
+    <div class="mb-10 rounded-xl p-4 reveal" style="background:var(--surface); border:1px solid var(--line);">
+      <svg viewBox="0 0 700 220" class="w-full h-auto" role="img" aria-label="Dependency map: Snowflake at the center, connected to dbt, Airflow, PySpark, Kafka, and AWS storage/compute">
+        <g stroke="var(--line)" stroke-width="1.3">
+          <line x1="350" y1="110" x2="150" y2="40"/>
+          <line x1="350" y1="110" x2="550" y2="40"/>
+          <line x1="350" y1="110" x2="120" y2="130"/>
+          <line x1="350" y1="110" x2="580" y2="130"/>
+          <line x1="350" y1="110" x2="220" y2="190"/>
+          <line x1="350" y1="110" x2="480" y2="190"/>
+          <line x1="120" y1="130" x2="60" y2="60"/>
+        </g>
+        <!-- center: snowflake -->
+        <g transform="translate(350,110)">
+          <circle r="30" fill="var(--ink)" stroke="var(--amber)" stroke-width="2"/>
+          <text text-anchor="middle" y="4" font-size="10" fill="var(--text)" font-family="JetBrains Mono, monospace">Snowflake</text>
+        </g>
+        <!-- dbt -->
+        <g transform="translate(150,40)">
+          <circle r="22" fill="var(--ink)" stroke="var(--teal)" stroke-width="1.5"/>
+          <text text-anchor="middle" y="4" font-size="9" fill="var(--text)" font-family="JetBrains Mono, monospace">dbt</text>
+        </g>
+        <!-- Airflow -->
+        <g transform="translate(550,40)">
+          <circle r="22" fill="var(--ink)" stroke="var(--teal)" stroke-width="1.5"/>
+          <text text-anchor="middle" y="4" font-size="9" fill="var(--text)" font-family="JetBrains Mono, monospace">Airflow</text>
+        </g>
+        <!-- S3 -->
+        <g transform="translate(120,130)">
+          <circle r="22" fill="var(--ink)" stroke="var(--teal)" stroke-width="1.5"/>
+          <text text-anchor="middle" y="4" font-size="9" fill="var(--text)" font-family="JetBrains Mono, monospace">S3</text>
+        </g>
+        <!-- Glue/EMR -->
+        <g transform="translate(60,60)">
+          <circle r="19" fill="var(--ink)" stroke="var(--line)" stroke-width="1.5"/>
+          <text text-anchor="middle" y="3" font-size="8" fill="var(--muted)" font-family="JetBrains Mono, monospace">Glue/EMR</text>
+        </g>
+        <!-- Athena -->
+        <g transform="translate(580,130)">
+          <circle r="22" fill="var(--ink)" stroke="var(--teal)" stroke-width="1.5"/>
+          <text text-anchor="middle" y="4" font-size="9" fill="var(--text)" font-family="JetBrains Mono, monospace">Athena</text>
+        </g>
+        <!-- PySpark -->
+        <g transform="translate(220,190)">
+          <circle r="22" fill="var(--ink)" stroke="var(--teal)" stroke-width="1.5"/>
+          <text text-anchor="middle" y="4" font-size="9" fill="var(--text)" font-family="JetBrains Mono, monospace">PySpark</text>
+        </g>
+        <!-- Kafka -->
+        <g transform="translate(480,190)">
+          <circle r="22" fill="var(--ink)" stroke="var(--teal)" stroke-width="1.5"/>
+          <text text-anchor="middle" y="4" font-size="9" fill="var(--text)" font-family="JetBrains Mono, monospace">Kafka</text>
+        </g>
+      </svg>
+      <p class="font-mono text-[10px] text-[var(--muted)] text-center mt-1">Snowflake is the warehouse of record — everything else exists to get clean data into it, or query it well once it's there.</p>
+    </div>
+
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div class="cluster-card rounded-lg p-5 reveal">
+        <p class="font-mono text-xs text-[var(--teal)] mb-3">orchestration &amp; transform</p>
+        <div class="flex flex-wrap gap-2">
+          <span class="cluster-node px-2.5 py-1 rounded">Airflow / MWAA</span>
+          <span class="cluster-node px-2.5 py-1 rounded">DAGs</span>
+          <span class="cluster-node px-2.5 py-1 rounded">Sensors</span>
+          <span class="cluster-node px-2.5 py-1 rounded">Backfills</span>
+          <span class="cluster-node px-2.5 py-1 rounded">dbt</span>
+          <span class="cluster-node px-2.5 py-1 rounded">dbt Testing</span>
+        </div>
+      </div>
+      <div class="cluster-card rounded-lg p-5 reveal">
+        <p class="font-mono text-xs text-[var(--teal)] mb-3">big data &amp; streaming</p>
+        <div class="flex flex-wrap gap-2">
+          <span class="cluster-node px-2.5 py-1 rounded">Apache Spark</span>
+          <span class="cluster-node px-2.5 py-1 rounded">PySpark</span>
+          <span class="cluster-node px-2.5 py-1 rounded">Structured Streaming</span>
+          <span class="cluster-node px-2.5 py-1 rounded">Apache Kafka</span>
+        </div>
+      </div>
+      <div class="cluster-card rounded-lg p-5 reveal">
+        <p class="font-mono text-xs text-[var(--teal)] mb-3">cloud (AWS)</p>
+        <div class="flex flex-wrap gap-2">
+          <span class="cluster-node px-2.5 py-1 rounded">S3</span>
+          <span class="cluster-node px-2.5 py-1 rounded">Glue</span>
+          <span class="cluster-node px-2.5 py-1 rounded">EMR</span>
+          <span class="cluster-node px-2.5 py-1 rounded">Athena</span>
+          <span class="cluster-node px-2.5 py-1 rounded">Lambda</span>
+          <span class="cluster-node px-2.5 py-1 rounded">Redshift</span>
+        </div>
+      </div>
+      <div class="cluster-card rounded-lg p-5 reveal">
+        <p class="font-mono text-xs text-[var(--teal)] mb-3">warehousing &amp; modeling</p>
+        <div class="flex flex-wrap gap-2">
+          <span class="cluster-node px-2.5 py-1 rounded">Snowflake</span>
+          <span class="cluster-node px-2.5 py-1 rounded">COPY INTO</span>
+          <span class="cluster-node px-2.5 py-1 rounded">Star Schema</span>
+          <span class="cluster-node px-2.5 py-1 rounded">SCD Type 2</span>
+        </div>
+      </div>
+      <div class="cluster-card rounded-lg p-5 reveal">
+        <p class="font-mono text-xs text-[var(--teal)] mb-3">devops</p>
+        <div class="flex flex-wrap gap-2">
+          <span class="cluster-node px-2.5 py-1 rounded">Git</span>
+          <span class="cluster-node px-2.5 py-1 rounded">GitHub Actions</span>
+          <span class="cluster-node px-2.5 py-1 rounded">Docker</span>
+          <span class="cluster-node px-2.5 py-1 rounded">Docker Compose</span>
+          <span class="cluster-node px-2.5 py-1 rounded">Slack Alerting</span>
+        </div>
+      </div>
+      <div class="cluster-card rounded-lg p-5 reveal">
+        <p class="font-mono text-xs text-[var(--teal)] mb-3">languages</p>
+        <div class="flex flex-wrap gap-2">
+          <span class="cluster-node px-2.5 py-1 rounded">Python</span>
+          <span class="cluster-node px-2.5 py-1 rounded">SQL</span>
+          <span class="cluster-node px-2.5 py-1 rounded">Scala (basic)</span>
+          <span class="cluster-node px-2.5 py-1 rounded">Pandas / NumPy</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- certifications -->
+    <div class="mt-16 reveal">
+      <p class="font-mono text-xs text-[var(--muted)] mb-4">certifications &amp; learning</p>
+      <div class="grid sm:grid-cols-3 gap-4">
+        <div class="sla-card rounded-lg p-4">
+          <p class="text-sm font-medium">AWS Partner: Accreditation (Technical)</p>
+          <p class="text-xs text-[var(--muted)] mt-1 font-mono">Amazon Web Services · May 2025</p>
+        </div>
+        <div class="sla-card rounded-lg p-4">
+          <p class="text-sm font-medium">Software Developer Trainee Certification</p>
+          <p class="text-xs text-[var(--muted)] mt-1 font-mono">NAPS, Government of India</p>
+        </div>
+        <div class="sla-card rounded-lg p-4">
+          <p class="text-sm font-medium">SQL (Basic &amp; Advanced), Python</p>
+          <p class="text-xs text-[var(--muted)] mt-1 font-mono">HackerRank</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="py-28 border-t" style="border-color:var(--line)">
+  <div class="max-w-6xl mx-auto px-5">
+    <p class="task-id mb-3 reveal">notify_contact</p>
+    <div class="grid lg:grid-cols-2 gap-10 items-end">
+      <div class="reveal">
+        <h2 class="font-display text-3xl sm:text-4xl font-semibold leading-tight mb-5">
+          Pipeline's stable.<br>Let's talk about what's next.
+        </h2>
+        <p class="text-[var(--muted)] max-w-md leading-relaxed">
+          Open to Data Engineer, Analytics Engineer, and Data Platform Engineer roles —
+          Gurugram, Noida, Bengaluru, or remote.
+        </p>
+      </div>
+      <div class="reveal flex flex-col gap-3 lg:items-end">
+        <a href="mailto:anujdslrc@gmail.com" class="btn-primary font-mono text-sm px-6 py-3.5 rounded-md w-full lg: text-center">anujdslrc@gmail.com</a>
+        <div class="flex gap-3 w-full">
+          <a href="#" class="btn-ghost font-mono text-sm px-5 py-3 rounded-md flex-1 text-center">LinkedIn ↗</a>
+          <a href="#" class="btn-ghost font-mono text-sm px-5 py-3 rounded-md flex-1 text-center">GitHub ↗</a>
+        </div>
+        <p class="font-mono text-xs text-[var(--muted)] mt-1"><a href="tel:+917355596863" class="hover:text-[var(--teal)] transition">+91-7355596863</a> · Noida, India</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="py-8 border-t" style="border-color:var(--line)">
+  <div class="max-w-6xl mx-auto px-5 flex flex-col sm:flex-row justify-between items-center gap-2 font-mono text-xs text-[var(--muted)]">
+    <p>© 2026 Anuj Srivastava — built by hand, not from a template.</p>
+    <p>run_id: <span style="color:var(--teal)">portfolio_v1</span></p>
+  </div>
+</footer>
+
+<script>
+  // ---- GSAP scroll reveals ----
+  gsap.registerPlugin(ScrollTrigger);
+  document.querySelectorAll('.reveal').forEach((el) => {
+    gsap.to(el, {
+      opacity: 1, y: 0, duration: 0.7, ease: 'power2.out',
+      scrollTrigger: { trigger: el, start: 'top 88%' }
+    });
+  });
+
+  // ---- project card spotlight ----
+  document.querySelectorAll('.project-card').forEach(card => {
+    card.addEventListener('mousemove', (e) => {
+      const r = card.getBoundingClientRect();
+      card.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+      card.style.setProperty('--my', (e.clientY - r.top) + 'px');
+    });
+  });
+
+  // ---- three.js ambient hero backdrop ----
+  (function(){
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const container = document.getElementById('hero-canvas');
+    if (!container || reduceMotion) return;
+
+    let width = container.clientWidth, height = container.clientHeight;
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(55, width/height, 0.1, 1000);
+    camera.position.z = 40;
+
+    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setSize(width, height);
+    container.appendChild(renderer.domElement);
+
+    // node points representing a distributed pipeline cluster
+    const count = 70;
+    const positions = new Float32Array(count * 3);
+    for (let i = 0; i < count; i++){
+      positions[i*3]   = (Math.random()-0.5) * 70;
+      positions[i*3+1] = (Math.random()-0.5) * 40;
+      positions[i*3+2] = (Math.random()-0.5) * 40;
+    }
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    const mat = new THREE.PointsMaterial({ color: 0x45D6C4, size: 0.9, transparent:true, opacity:0.8 });
+    const points = new THREE.Points(geo, mat);
+    scene.add(points);
+
+    // sparse connecting lines to suggest a data-flow graph, not random noise
+    const lineMat = new THREE.LineBasicMaterial({ color: 0x8B95A3, transparent:true, opacity:0.15 });
+    const linePositions = [];
+    for (let i = 0; i < count; i++){
+      if (Math.random() > 0.88){
+        const j = Math.floor(Math.random()*count);
+        linePositions.push(positions[i*3], positions[i*3+1], positions[i*3+2]);
+        linePositions.push(positions[j*3], positions[j*3+1], positions[j*3+2]);
+      }
+    }
+    const lineGeo = new THREE.BufferGeometry();
+    lineGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(linePositions), 3));
+    const lines = new THREE.LineSegments(lineGeo, lineMat);
+    scene.add(lines);
+
+    function animate(){
+      requestAnimationFrame(animate);
+      points.rotation.y += 0.0009;
+      points.rotation.x += 0.0002;
+      lines.rotation.y += 0.0009;
+      lines.rotation.x += 0.0002;
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    window.addEventListener('resize', () => {
+      width = container.clientWidth; height = container.clientHeight;
+      camera.aspect = width/height; camera.updateProjectionMatrix();
+      renderer.setSize(width, height);
+    });
+  })();
+
+  // ---- architecture explorer: interactive 3D pipeline ----
+  (function(){
+    const container = document.getElementById('arch-canvas');
+    const fallback = document.getElementById('arch-fallback');
+    if (!container) return;
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const stages = [
+      { name:'Kafka', tag:'stage 01 / 06', title:'Kafka — Ingestion Boundary',
+        body:"Every event enters through here first. This is the boundary where I decide what \u2018valid\u2019 means before anything downstream has to guess \u2014 malformed or late events get caught here, not three stages later where they're expensive to trace back." },
+      { name:'Spark', tag:'stage 02 / 06', title:'Spark — Transformation & Enrichment',
+        body:"PySpark Structured Streaming does the actual shaping \u2014 null handling, type validation, enrichment \u2014 with checkpoint-based recovery so a crash resumes from last offset instead of reprocessing everything." },
+      { name:'Airflow', tag:'stage 03 / 06', title:'Airflow — Orchestration & SLAs',
+        body:"This is where reliability actually lives: retries, sensors, backfills, SLA monitoring. A pipeline that runs once isn't done \u2014 it's done when someone else can trust it ran on schedule without watching it." },
+      { name:'dbt', tag:'stage 04 / 06', title:'dbt — Modeling & Testing',
+        body:"Staging \u2192 intermediate \u2192 mart layers, with tests wired into CI. This is the boundary where raw data becomes something a business question can actually be asked of." },
+      { name:'Snowflake', tag:'stage 05 / 06', title:'Snowflake — Warehouse of Record',
+        body:"Dimensional modeling, star schema, SCD Type 2 where history matters. Everything upstream exists to get clean data in here correctly the first time \u2014 fixing it after load is always more expensive." },
+      { name:'Analytics', tag:'stage 06 / 06', title:'Analytics — Where Trust Gets Tested',
+        body:"The pipeline is only as good as whether someone downstream trusts the number on a dashboard without double-checking it. That trust is the actual thing being engineered." }
+    ];
+
+    const panelTag = document.getElementById('arch-panel-tag');
+    const panelTitle = document.getElementById('arch-panel-title');
+    const panelBody = document.getElementById('arch-panel-body');
+    const panel = document.getElementById('arch-panel');
+    const pills = document.querySelectorAll('#arch-pills button');
+    let meshes = [];
+
+    function setActive(idx){
+      const s = stages[idx];
+      panelTag.textContent = s.tag;
+      panelTitle.textContent = s.title;
+      panelBody.textContent = s.body;
+      gsap.fromTo(panel, { opacity:0.4 }, { opacity:1, duration:0.35 });
+      meshes.forEach((m,i) => { if (m.material) m.material.opacity = i===idx ? 1 : 0.55; });
+      pills.forEach((p,i) => {
+        if (i === idx){ p.style.borderColor = 'var(--teal)'; p.style.color = 'var(--teal)'; }
+        else { p.style.borderColor = ''; p.style.color = ''; }
+      });
+    }
+    pills.forEach(p => p.addEventListener('click', () => setActive(parseInt(p.dataset.stage, 10))));
+
+    // graceful fallback if WebGL is unavailable or fails to init
+    function showFallback(){
+      container.classList.add('hidden');
+      if (fallback){ fallback.classList.remove('hidden'); fallback.classList.add('flex'); }
+    }
+
+    function webglAvailable(){
+      try {
+        const c = document.createElement('canvas');
+        return !!(window.WebGLRenderingContext && (c.getContext('webgl') || c.getContext('experimental-webgl')));
+      } catch(e){ return false; }
+    }
+
+    if (!webglAvailable()){
+      showFallback();
+      setActive(0);
+      return;
+    }
+
+    try {
+      let width = container.clientWidth, height = container.clientHeight;
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(45, width/height, 0.1, 1000);
+      camera.position.set(0, 1.2, 11);
+
+      const renderer = new THREE.WebGLRenderer({ alpha:true, antialias:true });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.setSize(width, height);
+      container.appendChild(renderer.domElement);
+
+      const group = new THREE.Group();
+      scene.add(group);
+
+      const nodeColor = 0x45D6C4;
+      const altColor = 0xFF8A3D;
+      const spacing = 3.4;
+      const startX = -(spacing * (stages.length - 1)) / 2;
+
+      stages.forEach((s, i) => {
+        const geo = new THREE.IcosahedronGeometry(0.55, 0);
+        const mat = new THREE.MeshBasicMaterial({ color: i % 2 === 0 ? nodeColor : altColor, wireframe:true, transparent:true, opacity:0.9 });
+        const mesh = new THREE.Mesh(geo, mat);
+        mesh.position.set(startX + i*spacing, Math.sin(i*0.8)*0.4, 0);
+        mesh.userData = { index:i };
+        group.add(mesh);
+        meshes.push(mesh);
+
+        const core = new THREE.Mesh(new THREE.IcosahedronGeometry(0.3,0), new THREE.MeshBasicMaterial({ color: i % 2 === 0 ? nodeColor : altColor, transparent:true, opacity:0.25 }));
+        core.position.copy(mesh.position);
+        group.add(core);
+
+        if (i > 0){
+          const pts = [meshes[i-1].position, mesh.position];
+          const lineGeo = new THREE.BufferGeometry().setFromPoints(pts);
+          const lineMat = new THREE.LineBasicMaterial({ color:0x8B95A3, transparent:true, opacity:0.4 });
+          group.add(new THREE.Line(lineGeo, lineMat));
+        }
+      });
+
+      let isDragging = false, prevX = 0, targetRotY = 0.15, currentRotY = 0.15;
+      container.addEventListener('pointerdown', e => { isDragging = true; prevX = e.clientX; });
+      window.addEventListener('pointerup', () => isDragging = false);
+      window.addEventListener('pointermove', e => {
+        if (!isDragging) return;
+        targetRotY += (e.clientX - prevX) * 0.005;
+        prevX = e.clientX;
+      });
+
+      const raycaster = new THREE.Raycaster();
+      const mouse = new THREE.Vector2();
+
+      function handlePick(clientX, clientY){
+        const rect = container.getBoundingClientRect();
+        mouse.x = ((clientX - rect.left) / rect.width) * 2 - 1;
+        mouse.y = -((clientY - rect.top) / rect.height) * 2 + 1;
+        raycaster.setFromCamera(mouse, camera);
+        const hits = raycaster.intersectObjects(meshes);
+        if (hits.length){
+          container.style.cursor = 'pointer';
+          return hits[0].object.userData.index;
+        }
+        container.style.cursor = 'grab';
+        return null;
+      }
+
+      container.addEventListener('click', (e) => {
+        const idx = handlePick(e.clientX, e.clientY);
+        if (idx !== null) setActive(idx);
+      });
+      container.addEventListener('pointermove', (e) => { handlePick(e.clientX, e.clientY); });
+
+      let t = 0;
+      function animate(){
+        requestAnimationFrame(animate);
+        if (!reduceMotion){
+          t += 0.01;
+          currentRotY += (targetRotY - currentRotY) * 0.06;
+          group.rotation.y = currentRotY;
+          meshes.forEach((m,i) => { m.rotation.x += 0.006; m.rotation.y += 0.004; m.position.y = Math.sin(t + i*0.8) * 0.25; });
+        }
+        renderer.render(scene, camera);
+      }
+      animate();
+      setActive(0);
+
+      window.addEventListener('resize', () => {
+        width = container.clientWidth; height = container.clientHeight;
+        if (!width || !height) return;
+        camera.aspect = width/height; camera.updateProjectionMatrix();
+        renderer.setSize(width, height);
+      });
+    } catch (err){
+      showFallback();
+      setActive(0);
+    }
+  })();
+
+  // ---- portrait: glass card depth, tilt, glow, nodes, idle float ----
+  (function(){
+    const scene   = document.getElementById('portrait-scene');
+    const card    = document.getElementById('portrait-card');
+    const glow    = document.getElementById('portrait-glow');
+    const l1 = document.getElementById('portrait-layer-1');
+    const l2 = document.getElementById('portrait-layer-2');
+    const l3 = document.getElementById('portrait-layer-3');
+    if (!scene || !card) return;
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const isTouch = window.matchMedia('(hover: none), (pointer: coarse)').matches;
+    const isSmall = window.matchMedia('(max-width: 640px)').matches;
+    const interactive = !reduceMotion && !isTouch && !isSmall;
+
+    // ---- ambient network nodes around the portrait ----
+    const dotsG  = document.getElementById('portrait-node-dots');
+    const linesG = document.getElementById('portrait-node-lines');
+    const nodeCount = isSmall ? 5 : 8;
+    const nodes = [];
+    const cx = 120, cy = 120, r = 108;
+    for (let i = 0; i < nodeCount; i++){
+      const angle = (i / nodeCount) * Math.PI * 2;
+      const nx = cx + Math.cos(angle) * r;
+      const ny = cy + Math.sin(angle) * r;
+      nodes.push({ x:nx, y:ny, angle, speed: 0.15 + Math.random()*0.15 });
+
+      const dot = document.createElementNS('http://www.w3.org/2000/svg','circle');
+      dot.setAttribute('r', i % 3 === 0 ? '2.6' : '1.6');
+      dot.setAttribute('fill', i % 3 === 0 ? 'var(--amber)' : 'var(--teal)');
+      dot.setAttribute('opacity', '0.75');
+      dotsG.appendChild(dot);
+
+      if (i > 0){
+        const line = document.createElementNS('http://www.w3.org/2000/svg','line');
+        line.setAttribute('stroke', 'var(--line)');
+        linesG.appendChild(line);
+      }
+    }
+    // connect ring
+    const ringLine = document.createElementNS('http://www.w3.org/2000/svg','line');
+    linesG.appendChild(ringLine);
+
+    let angleOffset = 0;
+    function renderNodes(){
+      if (!reduceMotion) angleOffset += 0.0022;
+      nodes.forEach((n, i) => {
+        const a = n.angle + angleOffset;
+        n.x = cx + Math.cos(a) * r;
+        n.y = cy + Math.sin(a) * r;
+        dotsG.children[i].setAttribute('cx', n.x);
+        dotsG.children[i].setAttribute('cy', n.y);
+      });
+      nodes.forEach((n, i) => {
+        if (i === 0) return;
+        const prev = nodes[i-1];
+        const line = linesG.children[i-1];
+        line.setAttribute('x1', prev.x); line.setAttribute('y1', prev.y);
+        line.setAttribute('x2', n.x);    line.setAttribute('y2', n.y);
+      });
+      const first = nodes[0], last = nodes[nodes.length-1];
+      linesG.lastElementChild.setAttribute('x1', last.x);
+      linesG.lastElementChild.setAttribute('y1', last.y);
+      linesG.lastElementChild.setAttribute('x2', first.x);
+      linesG.lastElementChild.setAttribute('y2', first.y);
+      requestAnimationFrame(renderNodes);
+    }
+    renderNodes();
+
+    // ---- 3D tilt + proximity glow (desktop, pointer-capable only) ----
+    if (interactive){
+      let rafId = null;
+      scene.addEventListener('mousemove', (e) => {
+        const rect = scene.getBoundingClientRect();
+        const px = (e.clientX - rect.left) / rect.width;   // 0..1
+        const py = (e.clientY - rect.top) / rect.height;
+        const rotY = (px - 0.5) * 14;   // deg
+        const rotX = (0.5 - py) * 14;
+
+        if (rafId) cancelAnimationFrame(rafId);
+        rafId = requestAnimationFrame(() => {
+          card.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg) translateZ(0)`;
+          l1.style.transform = `translateZ(-14px) scale(1.045) translate(${(px-0.5)*-6}px, ${(py-0.5)*-6}px)`;
+          l2.style.transform = `translateZ(-32px) scale(1.1) translate(${(px-0.5)*-12}px, ${(py-0.5)*-12}px)`;
+          l3.style.transform = `translateZ(-60px) scale(1.18) translate(${(px-0.5)*-20}px, ${(py-0.5)*-20}px)`;
+          glow.style.setProperty('--gx', (px*100) + '%');
+          glow.style.setProperty('--gy', (py*100) + '%');
+        });
+      });
+      scene.addEventListener('mouseenter', () => { glow.style.opacity = '1'; });
+      scene.addEventListener('mouseleave', () => {
+        glow.style.opacity = '0';
+        card.style.transform = 'rotateX(0deg) rotateY(0deg)';
+        l1.style.transform = 'translateZ(-14px) scale(1.045)';
+        l2.style.transform = 'translateZ(-32px) scale(1.1)';
+        l3.style.transform = 'translateZ(-60px) scale(1.18)';
+      });
+    }
+
+    // ---- gentle idle float (opacity/entrance is handled by the parent .reveal) ----
+    if (!reduceMotion){
+      gsap.to(scene, {
+        y: -6, duration: 2.6, ease: 'sine.inOut', yoyo: true, repeat: -1,
+        delay: 1 // let the parent's reveal-in finish first
+      });
+    }
+  })();
+</script>
+</body>
+</html>
